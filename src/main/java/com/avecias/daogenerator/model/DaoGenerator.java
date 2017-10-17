@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.Map;
 
 public class DaoGenerator {
 
@@ -79,11 +80,24 @@ public class DaoGenerator {
         String conTipo = conPackage.replace("###", nombre);
         return conTipo.replace("$$$", nombreObjeto);
     }
-    
-    private String prepararController(String nombre, String nombreObjeto){
+
+    private String prepararController(String nombre, String nombreObjeto) {
         String conPackageRoot = plantillaController.replace("root", paqueteRoot);
         String conPackage = conPackageRoot.replace("paquete", paquete);
         String conTipo = conPackage.replace("###", nombre);
         return conTipo.replace("$$$", nombreObjeto);
+    }
+
+    public void createDao(File fileJava, Map<String, String> packages, String templateDao) {
+        String conPackageRoot = templateDao.replace("root", "rootPackage");
+        String conPackage = conPackageRoot.replace("paquete", "subRootpackage");
+        String conTipo = conPackage.replace("###", "Actor");
+        System.out.println(conTipo.replace("$$$", "actor"));
+    }
+
+    public void createDaoImpl(File fileJava, Map<String, String> packages, String templateDaoImpl) {
+    }
+
+    public void createControllerSpring(File fileJava, Map<String, String> packages, String templateControllerSpring) {
     }
 }

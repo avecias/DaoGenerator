@@ -1,0 +1,20 @@
+package root.dao;
+
+import java.util.List;
+
+import paquete.###;
+import org.hibernate.HibernateException;
+
+public interface ###DAO {
+
+    public void save(### $$$) throws HibernateException;
+
+    public void update(### $$$) throws HibernateException;
+
+    public void delete(### $$$) throws HibernateException;
+
+    public List<###> getAll() throws HibernateException;
+
+    public ### getById(Integer id) throws HibernateException;
+
+}

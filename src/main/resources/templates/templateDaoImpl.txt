@@ -1,0 +1,67 @@
+package root.daoImpl;
+
+import java.util.List;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import root.dao.###DAO;
+import root.HibernateUtil;
+import paquete.###;
+
+import java.util.ArrayList;
+import org.hibernate.HibernateException;
+
+public class ###DAOImpl implements ###DAO {
+
+    @Override
+    public void save(### $$$) throws HibernateException {
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            Transaction tx = session.beginTransaction();
+            session.save($$$);
+            tx.commit();
+            session.close();
+    }
+
+    @Override
+    public void update(### $$$) throws HibernateException {
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            Transaction tx = session.beginTransaction();
+            session.update($$$);
+            tx.commit();
+            session.close();
+
+    }
+
+    @Override
+    public void delete(### $$$) throws HibernateException {
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            Transaction tx = session.beginTransaction();
+            session.delete($$$);
+            tx.commit();
+            session.close();
+    }
+
+    @Override
+    public List<###> getAll() throws HibernateException {
+            List<###> ###sList = new ArrayList<>();
+            List<?> objectList = new ArrayList<>();
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            objectList = session.createCriteria(###.class).list();
+            for (Object ob : objectList) {
+                    if (ob instanceof ###) {
+                            ###sList.add((###) ob);
+                    }
+            }
+            session.close();
+            return ###sList;
+    }
+
+    @Override
+    public ### getById(Integer id) throws HibernateException {
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            ### $$$ = (###) session.get(###.class, id);
+            session.close();
+            return $$$;
+    }
+}
