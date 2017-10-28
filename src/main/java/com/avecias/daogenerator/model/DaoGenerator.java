@@ -3,6 +3,7 @@ Clase para generar el archivo
  */
 package com.avecias.daogenerator.model;
 
+import com.avecias.daogenerator.commons.GeneratorException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -88,7 +89,11 @@ public class DaoGenerator {
         return conTipo.replace("$$$", nombreObjeto);
     }
 
-    public void createDao(File fileJava, Map<String, String> packages, String templateDao) {
+    public void createDao(File fileJava, Map<String, String> packages, String templateDao) throws GeneratorException {
+        File filedAO = new File(fileJava.getParent() + File.separator + "Dao");
+        if(filedAO.mkdirs()){
+            throw new GeneratorException("No se pudo crear el directorio");
+        }
         String conPackageRoot = templateDao.replace("root", "rootPackage");
         String conPackage = conPackageRoot.replace("paquete", "subRootpackage");
         String conTipo = conPackage.replace("###", "Actor");

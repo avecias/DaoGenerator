@@ -24,7 +24,7 @@ public class MainApp extends Application {
     }
 
     private static void go(String directory) {
-        System.out.println(directory);
+        System.out.println("Start with arguments directory: " +  directory);
     }
 
     @Override
@@ -68,6 +68,7 @@ public class MainApp extends Application {
             System.out.println("Menu");
             openFileChooser();
         }
+        System.exit(0);
     }
 
 }

@@ -1,67 +1,67 @@
-package root.daoImpl;
+package PACKAGE_ROOT.daoImpl;
 
 import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-import root.dao.###DAO;
-import root.HibernateUtil;
-import paquete.###;
+import PACKAGE_ROOT.dao.CLASSDao;
+import PACKAGE_ROOT.persistence.HibernateUtil;
+import PACKAGE_POJOS.CLASS;
 
 import java.util.ArrayList;
 import org.hibernate.HibernateException;
 
-public class ###DAOImpl implements ###DAO {
+public class CLASSDaoImpl implements CLASSDao {
 
     @Override
-    public void save(### $$$) throws HibernateException {
+    public void save(CLASS OBJECT) throws HibernateException {
             Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction tx = session.beginTransaction();
-            session.save($$$);
+            session.save(OBJECT);
             tx.commit();
             session.close();
     }
 
     @Override
-    public void update(### $$$) throws HibernateException {
+    public void update(CLASS OBJECT) throws HibernateException {
             Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction tx = session.beginTransaction();
-            session.update($$$);
+            session.update(OBJECT);
             tx.commit();
             session.close();
 
     }
 
     @Override
-    public void delete(### $$$) throws HibernateException {
+    public void delete(CLASS OBJECT) throws HibernateException {
             Session session = HibernateUtil.getSessionFactory().openSession();
             Transaction tx = session.beginTransaction();
-            session.delete($$$);
+            session.delete(OBJECT);
             tx.commit();
             session.close();
     }
 
     @Override
-    public List<###> getAll() throws HibernateException {
-            List<###> ###sList = new ArrayList<>();
+    public List<CLASS> getAll() throws HibernateException {
+            List<CLASS> CLASSsList = new ArrayList<>();
             List<?> objectList = new ArrayList<>();
             Session session = HibernateUtil.getSessionFactory().openSession();
-            objectList = session.createCriteria(###.class).list();
+            objectList = session.createCriteria(CLASS.class).list();
             for (Object ob : objectList) {
-                    if (ob instanceof ###) {
-                            ###sList.add((###) ob);
+                    if (ob instanceof CLASS) {
+                            CLASSsList.add((CLASS) ob);
                     }
             }
             session.close();
-            return ###sList;
+            return CLASSsList;
     }
 
     @Override
-    public ### getById(Integer id) throws HibernateException {
+    public CLASS getById(Integer id) throws HibernateException {
             Session session = HibernateUtil.getSessionFactory().openSession();
-            ### $$$ = (###) session.get(###.class, id);
+            CLASS OBJECT = (CLASS) session.get(CLASS.class, id);
             session.close();
-            return $$$;
+            return OBJECT;
     }
 }

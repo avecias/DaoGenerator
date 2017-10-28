@@ -8,6 +8,7 @@ import com.avecias.daogenerator.commons.UtilGenerator;
 import com.avecias.daogenerator.model.DaoGenerator;
 import com.avecias.daogenerator.model.TemplateFactory;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
@@ -24,19 +25,18 @@ public class Generate {
             Map<String, String> packages = UtilGenerator.getPackages(filesjava.get(0));
             // 3. for: generate all class
             DaoGenerator daoGenerator = new DaoGenerator();
+            daoGenerator.crearDAOS();
             TemplateFactory factory = TemplateFactory.getInstance();
-            filesjava.stream().map((fileJava) -> {
+            for (File fileJava : filesjava) {
                 daoGenerator.createDao(fileJava, packages, factory.getTemplateDao());
-                return fileJava;
-            }).map((fileJava) -> {
                 daoGenerator.createDaoImpl(fileJava, packages, factory.getTemplateDaoImpl());
-                return fileJava;
-            }).forEachOrdered((fileJava) -> {
                 daoGenerator.createControllerSpring(fileJava, packages, factory.getTemplateControllerSpring());
-            });
+            }
             // 4. Finish
         } catch (GeneratorException e) {
             System.err.println("Error " + e);
+        } catch (FileNotFoundException ex) {
+            System.err.println("Error en io " + ex);
         }
     }
 

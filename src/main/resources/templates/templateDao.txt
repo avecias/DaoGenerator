@@ -1,20 +1,20 @@
-package root.dao;
+package PACKAGE_ROOT.dao;
 
 import java.util.List;
 
-import paquete.###;
+import PACKAGE_POJOS.CLASS;
 import org.hibernate.HibernateException;
 
-public interface ###DAO {
+public interface CLASSDao {
 
-    public void save(### $$$) throws HibernateException;
+    public void save(CLASS OBJECT) throws HibernateException;
 
-    public void update(### $$$) throws HibernateException;
+    public void update(CLASS OBJECT) throws HibernateException;
 
-    public void delete(### $$$) throws HibernateException;
+    public void delete(CLASS OBJECT) throws HibernateException;
 
-    public List<###> getAll() throws HibernateException;
+    public List<CLASS> getAll() throws HibernateException;
 
-    public ### getById(Integer id) throws HibernateException;
+    public CLASS getById(Integer id) throws HibernateException;
 
 }
