@@ -1,0 +1,25 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package BASE_PACKAGE.model.validation;
+
+/**
+ *
+ * @author gvalentin Created on May 30, 2018, 1:52:25 PM
+ */
+public class ValidationException extends Exception {
+
+    public ValidationException() {
+    }
+
+    public ValidationException(String message) {
+        super(message);
+    }
+
+    public ValidationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+}

@@ -1,0 +1,25 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package mx.trillas.nit.model.validation;
+
+import java.io.Serializable;
+
+/**
+ *
+ * @author DATA
+ * @param <T>
+ */
+public interface Validator<T extends Serializable> {
+
+    public void add(T odt) throws ValidationException;
+
+    public void get(T odt) throws ValidationException;
+
+    public void update(T odt) throws ValidationException;
+
+    public void delete(T odt) throws ValidationException;
+
+}

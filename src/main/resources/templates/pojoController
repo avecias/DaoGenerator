@@ -1,0 +1,291 @@
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package BASE_PACKAGE.controller.service;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import BASE_PACKAGE.model.entity.ResultCLASS;
+import BASE_PACKAGE.model.entity.ResultStatus;
+import BASE_PACKAGE.model.entity.dao.CLASSDao;
+import BASE_PACKAGE.model.entity.dao.impl.CLASSDaoImpl;
+import BASE_PACKAGE.model.entity.dto.CLASSDto;
+import BASE_PACKAGE.model.entity.pojo.CLASS;
+import BASE_PACKAGE.model.exception.DataBaseException;
+import BASE_PACKAGE.model.exception.ObjectNotFoundException;
+import BASE_PACKAGE.model.mapper.CLASSMapper;
+import BASE_PACKAGE.model.mapper.MapperException;
+import BASE_PACKAGE.model.persistence.HibernateUtil;
+import BASE_PACKAGE.model.validation.CLASSValidation;
+import BASE_PACKAGE.model.validation.ValidationException;
+import BASE_PACKAGE.util.ConnectionUtil;
+import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ *
+ * @author gvalentin Created on Jul 24, 2018, 5:59:45 PM
+ */
+@RestController
+@RequestMapping(value = "/OBJECT")
+public class CLASSController {
+
+    // LOGGER
+    private static final Logger LOG = Logger.getLogger(CLASSController.class);
+    // DAO
+    private final CLASSDao OBJECTDao = new CLASSDaoImpl();
+    // MAPPER
+    private final CLASSMapper OBJECTMapper = new CLASSMapper();
+    // VALIDATOR
+    private final CLASSValidation OBJECTValidation = new CLASSValidation();
+
+    // GET
+    @RequestMapping(value = "/get/{idCLASS}", method = RequestMethod.GET)
+    public ResultCLASS getOneById(@PathVariable int idCLASS) {
+        CLASSDto OBJECTDto = new CLASSDto();
+        OBJECTDto.setIdCLASS(idCLASS);
+        ResultCLASS result = new ResultCLASS(OBJECTDto, ResultStatus.OBJECT_NULL.getValue(), ResultStatus.OBJECT_NULL.toString());
+        Session session = null;
+        try {
+            OBJECTValidation.get(OBJECTDto);
+            session = HibernateUtil.getSessionFactory().openSession();
+            CLASS OBJECT = OBJECTMapper.fromDtoToEntity(OBJECTDto);
+            OBJECT = OBJECTDao.read(OBJECT, session);
+            session.close();
+            if (OBJECT == null) {
+                throw new ObjectNotFoundException("Marca con id = " + idCLASS + " no encontrado");
+            }
+            OBJECTDto = OBJECTMapper.fromEntityToDto(OBJECT);
+            result.setCLASS(OBJECTDto);
+            result.setStatus(ResultStatus.OK.getValue());
+            result.setMessage(ResultStatus.OK.name());
+        } catch (MapperException ex) {
+            result.setStatus(ResultStatus.OBJECT_NOT_MAPPED.getValue());
+            result.setMessage(ResultStatus.OBJECT_NOT_MAPPED.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.OBJECT_NOT_MAPPED.name(), ex);
+        } catch (ValidationException ex) {
+            result.setStatus(ResultStatus.OBJECT_IS_NOT_VALID.getValue());
+            result.setMessage(ResultStatus.OBJECT_IS_NOT_VALID.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.OBJECT_IS_NOT_VALID.name(), ex);
+        } catch (ObjectNotFoundException ex) {
+            result.setStatus(ResultStatus.OBJECT_NOT_FOUND.getValue());
+            result.setMessage(ResultStatus.OBJECT_NOT_FOUND.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.OBJECT_NOT_FOUND.name(), ex);
+        } catch (HibernateException ex) {
+            result.setStatus(ResultStatus.ERROR_DATA_BASE.getValue());
+            result.setMessage(ResultStatus.ERROR_DATA_BASE.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.ERROR_DATA_BASE.name(), ex);
+        } catch (Exception e) {
+            result.setStatus(ResultStatus.ERROR.getValue());
+            result.setMessage(ResultStatus.ERROR.name() + " : " + e.toString());
+            LOG.error(ResultStatus.ERROR.name(), e);
+        }
+        ConnectionUtil.close(session);
+        return result;
+    }
+
+    @RequestMapping(value = "/create/", method = RequestMethod.POST)
+    public ResultCLASS createOne(@ModelAttribute CLASSDto OBJECTDto) {
+        ResultCLASS result = new ResultCLASS(OBJECTDto, ResultStatus.OBJECT_NULL.getValue(), ResultStatus.OBJECT_NULL.toString());
+        Session session = null;
+        Transaction tx = null;
+        try {
+            // VALIDATE
+            OBJECTValidation.add(OBJECTDto);
+            // TRANSACTION
+            session = HibernateUtil.getSessionFactory().openSession();
+            tx = session.beginTransaction();
+            // REGISTRATION
+            OBJECTDto.setRegistration(new Date());
+            // MAP
+            CLASS OBJECT = OBJECTMapper.fromDtoToEntity(OBJECTDto);
+            // CREATE
+            OBJECT = OBJECTDao.create(OBJECT, session);
+            tx.commit();
+            session.close();
+            // CLOSE SESSION
+            if (OBJECT == null) {
+                throw new DataBaseException("No se logró guardar en la base de datos");
+            }
+            // REMAP
+            OBJECTDto = OBJECTMapper.fromEntityToDto(OBJECT);
+            result.setCLASS(OBJECTDto);
+            result.setStatus(ResultStatus.OK.getValue());
+            result.setMessage(ResultStatus.OK.name());
+        } catch (MapperException ex) {
+            result.setStatus(ResultStatus.OBJECT_NOT_MAPPED.getValue());
+            result.setMessage(ResultStatus.OBJECT_NOT_MAPPED.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.OBJECT_NOT_MAPPED.name(), ex);
+        } catch (ValidationException ex) {
+            result.setStatus(ResultStatus.OBJECT_IS_NOT_VALID.getValue());
+            result.setMessage(ResultStatus.OBJECT_IS_NOT_VALID.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.OBJECT_IS_NOT_VALID.name(), ex);
+        } catch (DataBaseException ex) {
+            result.setStatus(ResultStatus.ERROR_DATA_BASE.getValue());
+            result.setMessage(ResultStatus.ERROR_DATA_BASE.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.ERROR_DATA_BASE.name(), ex);
+        } catch (HibernateException ex) {
+            ConnectionUtil.rollBack(tx);
+            result.setStatus(ResultStatus.ERROR_HIBERNATE.getValue());
+            result.setMessage(ResultStatus.ERROR_HIBERNATE.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.ERROR_HIBERNATE.name(), ex);
+        } catch (Exception e) {
+            result.setStatus(ResultStatus.ERROR.getValue());
+            result.setMessage(ResultStatus.ERROR.name() + " : " + e.toString());
+            LOG.error(ResultStatus.ERROR.name(), e);
+        }
+        ConnectionUtil.close(session);
+        return result;
+    }
+
+    @RequestMapping(value = "/update/", method = RequestMethod.POST)
+    public ResultCLASS updateOne(@ModelAttribute CLASSDto OBJECTDto) {
+        ResultCLASS result = new ResultCLASS(OBJECTDto, ResultStatus.OBJECT_NULL.getValue(), ResultStatus.OBJECT_NULL.toString());
+        Session session = null;
+        Transaction tx = null;
+        try {
+            // VALIDATE
+            OBJECTValidation.update(OBJECTDto);
+            // GET
+            CLASSDto compDto = new CLASSDto();
+            compDto.setIdCLASS(OBJECTDto.getIdCLASS());
+            CLASS comp = OBJECTMapper.fromDtoToEntity(compDto);
+            session = HibernateUtil.getSessionFactory().openSession();
+            comp = OBJECTDao.read(comp, session);
+            session.close();
+            // CLOSE SESSION
+            if (comp == null) {
+                throw new ObjectNotFoundException("No se logró encontrar la marca con id = " + OBJECTDto.getIdCLASS() + " para modificar");
+            }
+            // COMPARE
+            CLASS OBJECT = OBJECTMapper.fromDtoToEntity(OBJECTDto);
+            OBJECT.setRegistration(comp.getRegistration());
+            // TRANSACTION
+            session = HibernateUtil.getSessionFactory().openSession();
+            tx = session.beginTransaction();
+            // LAST UPDATE
+            OBJECT.setLastUpdate(new Date());
+            OBJECT = OBJECTDao.update(OBJECT, session);
+            tx.commit();
+            session.close();
+            // SESSION CLOSE
+            if (OBJECT == null) {
+                throw new DataBaseException("No se logró actualizar en la base de datos");
+            }
+            OBJECTDto = OBJECTMapper.fromEntityToDto(OBJECT);
+            result.setCLASS(OBJECTDto);
+            result.setStatus(ResultStatus.OK.getValue());
+            result.setMessage(ResultStatus.OK.name());
+        } catch (MapperException ex) {
+            result.setStatus(ResultStatus.OBJECT_NOT_MAPPED.getValue());
+            result.setMessage(ResultStatus.OBJECT_NOT_MAPPED.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.OBJECT_NOT_MAPPED.name(), ex);
+        } catch (ValidationException ex) {
+            result.setStatus(ResultStatus.OBJECT_IS_NOT_VALID.getValue());
+            result.setMessage(ResultStatus.OBJECT_IS_NOT_VALID.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.OBJECT_IS_NOT_VALID.name(), ex);
+        } catch (DataBaseException ex) {
+            result.setStatus(ResultStatus.ERROR_DATA_BASE.getValue());
+            result.setMessage(ResultStatus.ERROR_DATA_BASE.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.ERROR_DATA_BASE.name(), ex);
+        } catch (HibernateException ex) {
+            ConnectionUtil.rollBack(tx);
+            result.setStatus(ResultStatus.ERROR_HIBERNATE.getValue());
+            result.setMessage(ResultStatus.ERROR_HIBERNATE.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.ERROR_HIBERNATE.name(), ex);
+        } catch (ObjectNotFoundException ex) {
+            result.setStatus(ResultStatus.OBJECT_NOT_FOUND.getValue());
+            result.setMessage(ResultStatus.OBJECT_NOT_FOUND.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.OBJECT_NOT_FOUND.name(), ex);
+        } catch (Exception e) {
+            result.setStatus(ResultStatus.ERROR.getValue());
+            result.setMessage(ResultStatus.ERROR.name() + " : " + e.toString());
+            LOG.error(ResultStatus.ERROR.name(), e);
+        }
+        ConnectionUtil.close(session);
+        return result;
+    }
+
+    @RequestMapping(value = "/delete/{idCLASS}", method = RequestMethod.DELETE)
+    public ResultCLASS createOne(@PathVariable int idCLASS) {
+        CLASSDto OBJECTDto = new CLASSDto();
+        OBJECTDto.setIdCLASS(idCLASS);
+        ResultCLASS result = new ResultCLASS(OBJECTDto, ResultStatus.OBJECT_NULL.getValue(), ResultStatus.OBJECT_NULL.toString());
+        Session session = null;
+        Transaction tx = null;
+        try {
+            // VALIDATE
+            OBJECTValidation.delete(OBJECTDto);
+            // TRANSACTION
+            session = HibernateUtil.getSessionFactory().openSession();
+            tx = session.beginTransaction();
+            // MAP
+            CLASS OBJECT = OBJECTMapper.fromDtoToEntity(OBJECTDto);
+            // CREATE
+            OBJECT = OBJECTDao.delete(OBJECT, session);
+            tx.commit();
+            session.close();
+            // CLOSE SESSION
+            if (OBJECT == null) {
+                throw new DataBaseException("No se logró borrar de la base de datos");
+            }
+            // REMAP
+            OBJECTDto = OBJECTMapper.fromEntityToDto(OBJECT);
+            result.setCLASS(OBJECTDto);
+            result.setStatus(ResultStatus.OK.getValue());
+            result.setMessage(ResultStatus.OK.name());
+        } catch (MapperException ex) {
+            result.setStatus(ResultStatus.OBJECT_NOT_MAPPED.getValue());
+            result.setMessage(ResultStatus.OBJECT_NOT_MAPPED.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.OBJECT_NOT_MAPPED.name(), ex);
+        } catch (ValidationException ex) {
+            result.setStatus(ResultStatus.OBJECT_IS_NOT_VALID.getValue());
+            result.setMessage(ResultStatus.OBJECT_IS_NOT_VALID.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.OBJECT_IS_NOT_VALID.name(), ex);
+        } catch (DataBaseException ex) {
+            result.setStatus(ResultStatus.ERROR_DATA_BASE.getValue());
+            result.setMessage(ResultStatus.ERROR_DATA_BASE.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.ERROR_DATA_BASE.name(), ex);
+        } catch (HibernateException ex) {
+            ConnectionUtil.rollBack(tx);
+            result.setStatus(ResultStatus.ERROR_HIBERNATE.getValue());
+            result.setMessage(ResultStatus.ERROR_HIBERNATE.name() + " : " + ex.toString());
+            LOG.error(ResultStatus.ERROR_HIBERNATE.name(), ex);
+        } catch (Exception e) {
+            result.setStatus(ResultStatus.ERROR.getValue());
+            result.setMessage(ResultStatus.ERROR.name() + " : " + e.toString());
+            LOG.error(ResultStatus.ERROR.name(), e);
+        }
+        ConnectionUtil.close(session);
+        return result;
+    }
+
+    @RequestMapping(value = "/all/", method = RequestMethod.GET)
+    public List<CLASSDto> getAll() {
+        List<CLASSDto> userDtos = new ArrayList<>();
+        Session session = null;
+        try {
+            session = HibernateUtil.getSessionFactory().openSession();
+            List<CLASS> users = OBJECTDao.readAll(session);
+            session.close();
+            userDtos = OBJECTMapper.fromEntityToDto(users);
+        } catch (MapperException ex) {
+            LOG.error("Error en el mapeo", ex);
+        } catch (HibernateException ex) {
+            LOG.error("Error en Hibernate", ex);
+        }
+        ConnectionUtil.close(session);
+        return userDtos;
+    }
+}

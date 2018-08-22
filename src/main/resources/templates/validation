@@ -1,0 +1,58 @@
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package BASE_PACKAGE.model.validation;
+
+import BASE_PACKAGE.model.entity.dto.CLASSDto;
+
+/**
+ *
+ * @author DATA
+ */
+public class CLASSValidation implements Validator<CLASSDto> {
+
+    @Override
+    public void add(CLASSDto odt) throws ValidationException {
+        if (odt == null) {
+            throw new ValidationException("Objeto nullo");
+        }
+        if (odt.getCLASS() == null && odt.getCLASS().isEmpty()) {
+            throw new ValidationException("No contiene nombre de la marca");
+        }
+        if (odt.getDescription() == null && odt.getDescription().isEmpty()) {
+            throw new ValidationException("No contiene descripción de la marca");
+        }
+    }
+
+    @Override
+    public void get(CLASSDto odt) throws ValidationException {
+        if (odt == null) {
+            throw new ValidationException("Objeto nullo");
+        }
+        if (odt.getIdCLASS() == null || odt.getIdCLASS() <= 0) {
+            throw new ValidationException("Id no valido");
+        }
+    }
+
+    @Override
+    public void update(CLASSDto odt) throws ValidationException {
+        add(odt);
+        if (odt.getIdCLASS() == null || odt.getIdCLASS() <= 0) {
+            throw new ValidationException("Id no valido");
+        }
+    }
+
+    @Override
+    public void delete(CLASSDto odt) throws ValidationException {
+        if (odt == null) {
+            throw new ValidationException("Objeto nullo");
+        }
+        if (odt.getIdCLASS() == null || odt.getIdCLASS() <= 0) {
+            throw new ValidationException("Id no valido");
+        }
+    }
+
+}

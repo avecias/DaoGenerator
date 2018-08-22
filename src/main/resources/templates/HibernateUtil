@@ -1,0 +1,28 @@
+package BASE_PACKAGE.model.persistence;
+
+import org.apache.log4j.Logger;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
+
+public class HibernateUtil {
+
+    private static final Logger LOG = Logger.getLogger(HibernateUtil.class);
+    private static final SessionFactory SESSION_FACTORY;
+
+    static {
+        try {
+            // Create the SessionFactory from standard (hibernate.cfg.xml) 
+            // config file.
+            SESSION_FACTORY = new AnnotationConfiguration().configure().buildSessionFactory();
+        } catch (Throwable ex) {
+            // Log the exception. 
+            LOG.error("Initial SessionFactory creation failed." + ex);
+            throw new ExceptionInInitializerError(ex);
+        }
+    }
+
+    public static SessionFactory getSessionFactory() {
+        return SESSION_FACTORY;
+    }
+
+}

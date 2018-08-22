@@ -3,106 +3,47 @@ Clase para generar el archivo
  */
 package com.avecias.daogenerator.model;
 
-import com.avecias.daogenerator.commons.GeneratorException;
+import com.avecias.daogenerator.commons.UtilGenerator;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
+import java.io.InputStream;
 
 public class DaoGenerator {
 
-    private File directorio;
-    private String plantillaDAO;
-    private String plantillaDAOImp;
-    private String plantillaController;
-    private List<File> archivos;
-    private String paqueteRoot;
-    private String paquete;
+    private static DaoGenerator DAO_GENERATOR = null;
+    public File directoryOrms;
+    public static String modelEntity;
+    public static String modelValidations;
+    public static String modelMapper;
+    public static String modelDao;
+    public static InputStream dao;
+    public static InputStream hibernateUtil;
+    public static InputStream mapper;
+    public static InputStream mapperException;
+    public static InputStream validationException;
+    public static InputStream validator;
+    public static String templateDao;
+    public static String templateDaoImpl;
+    public static String templateController;
 
     public DaoGenerator() {
+        ClassLoader cl = DaoGenerator.class.getClassLoader();
+        dao = cl.getResourceAsStream("Dao");
+        hibernateUtil = cl.getResourceAsStream("HibernateUtil");
+        mapper = cl.getResourceAsStream("Mapper");
+        mapperException = cl.getResourceAsStream("MapperException");
+        validationException = cl.getResourceAsStream("ValidationException");
+        validator = cl.getResourceAsStream("Validator");
+        templateDao = UtilGenerator.resourceToString(cl.getResourceAsStream("templates/pojoDao"));
+        templateDaoImpl = UtilGenerator.resourceToString(cl.getResourceAsStream("templates/pojoDaoImpl"));
+        templateController = UtilGenerator.resourceToString(cl.getResourceAsStream("templates/pojoController"));
+        modelEntity = "model.entity.pojo";
     }
 
-    public DaoGenerator(File directorio, String plantillaDAO, String plantillaDAOImp, String plantillaController, List<File> archivos, String paqueteRoot, String paquete) {
-        this.directorio = directorio;
-        this.plantillaDAO = plantillaDAO;
-        this.plantillaDAOImp = plantillaDAOImp;
-        this.plantillaController = plantillaController;
-        this.archivos = archivos;
-        this.paqueteRoot = paqueteRoot;
-        this.paquete = paquete;
-    }
-
-    public int crearDAOS() {
-        int exitosos = 0;
-        // Crear los directorios
-        String root = directorio.getParent();
-        String RutaDAO = root + "/dao";
-        String RutaDAOImpl = root + "/daoImpl";
-        String RutaController = root + "/controller";
-        File dirDAO = new File(RutaDAO);
-        dirDAO.mkdirs();
-        File dirDAOImpl = new File(RutaDAOImpl);
-        dirDAOImpl.mkdirs();
-        File dirController = new File(RutaController);
-        dirController.mkdirs();
-        try {
-            for (File archivo : archivos) {
-                String nombre = archivo.getName();
-                nombre = nombre.substring(0, nombre.indexOf("."));
-                String nombreObjeto = nombre.substring(0, 1).toLowerCase() + nombre.substring(1);
-                PrintWriter pwDao = new PrintWriter(RutaDAO + "/" + nombre + "DAO.java");
-                PrintWriter pwDaoImpl = new PrintWriter(RutaDAOImpl + "/" + nombre + "DAOImpl.java");
-                PrintWriter pwController = new PrintWriter(RutaController + "/" + nombre + "Controller.java");
-                pwDao.print(prepararDao(nombre, nombreObjeto));
-                pwDaoImpl.print(prepararDaoImpl(nombre, nombreObjeto));
-                pwController.print(prepararController(nombre, nombreObjeto));
-                pwDao.close();
-                pwDaoImpl.close();
-                pwController.close();
-                exitosos++;
-            }
-        } catch (FileNotFoundException ex) {
-            System.err.println("Algo sucedio Mal " + ex);
+    public static DaoGenerator getInstance() {
+        if (DAO_GENERATOR == null) {
+            DAO_GENERATOR = new DaoGenerator();
         }
-        return exitosos;
+        return DAO_GENERATOR;
     }
 
-    private String prepararDao(String nombre, String nombreObjeto) {
-        String conPackageRoot = plantillaDAO.replace("root", paqueteRoot);
-        String conPackage = conPackageRoot.replace("paquete", paquete);
-        String conTipo = conPackage.replace("###", nombre);
-        return conTipo.replace("$$$", nombreObjeto);
-    }
-
-    private String prepararDaoImpl(String nombre, String nombreObjeto) {
-        String conPackageRoot = plantillaDAOImp.replace("root", paqueteRoot);
-        String conPackage = conPackageRoot.replace("paquete", paquete);
-        String conTipo = conPackage.replace("###", nombre);
-        return conTipo.replace("$$$", nombreObjeto);
-    }
-
-    private String prepararController(String nombre, String nombreObjeto) {
-        String conPackageRoot = plantillaController.replace("root", paqueteRoot);
-        String conPackage = conPackageRoot.replace("paquete", paquete);
-        String conTipo = conPackage.replace("###", nombre);
-        return conTipo.replace("$$$", nombreObjeto);
-    }
-
-    public void createDao(File fileJava, Map<String, String> packages, String templateDao) throws GeneratorException {
-        File filedAO = new File(fileJava.getParent() + File.separator + "Dao");
-        if(filedAO.mkdirs()){
-            throw new GeneratorException("No se pudo crear el directorio");
-        }
-        String conPackageRoot = templateDao.replace("root", "rootPackage");
-        String conPackage = conPackageRoot.replace("paquete", "subRootpackage");
-        String conTipo = conPackage.replace("###", "Actor");
-        System.out.println(conTipo.replace("$$$", "actor"));
-    }
-
-    public void createDaoImpl(File fileJava, Map<String, String> packages, String templateDaoImpl) {
-    }
-
-    public void createControllerSpring(File fileJava, Map<String, String> packages, String templateControllerSpring) {
-    }
 }

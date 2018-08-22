@@ -7,6 +7,7 @@ package com.avecias.daogenerator.commons;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +39,7 @@ public class UtilGenerator {
         File[] files = directory.listFiles();
         List<File> filesJava = new ArrayList<>();
         for (File file : files) {
-            if (file.getName().endsWith(".java")) {
+            if (file.isFile() && file.getName().endsWith(".java")) {
                 filesJava.add(file);
             }
         }
@@ -84,5 +85,16 @@ public class UtilGenerator {
             throw new GeneratorException("No existe los paquetes suficientes");
         }
         return map;
+    }
+
+    public static String resourceToString(InputStream is) {
+        StringBuilder builder;
+        Scanner s;
+        s = new Scanner(is);
+        builder = new StringBuilder();
+        while (s.hasNextLine()) {
+            builder.append(s.nextLine()).append("\n");
+        }
+        return s.toString();
     }
 }

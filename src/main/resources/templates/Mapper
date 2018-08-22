@@ -1,0 +1,24 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package BASE_PACKAGE.model.mapper;
+
+/**
+ *
+ * @author DATA
+ */
+import java.util.List;
+
+public interface Mapper<Entity, Dto> {
+
+    public Entity fromDtoToEntity(Dto dto) throws MapperException;
+
+    public Dto fromEntityToDto(Entity entity) throws MapperException;
+
+    public List<Entity> fromDtoToEntity(List<Dto> dtos) throws MapperException;
+
+    public List<Dto> fromEntityToDto(List<Entity> entities) throws MapperException;
+
+}
