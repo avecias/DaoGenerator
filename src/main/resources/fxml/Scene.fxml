@@ -6,24 +6,30 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="495.0" prefWidth="467.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.avecias.daogenerator.controller.fx.FXMLController">
+<AnchorPane id="AnchorPane" prefHeight="640.0" prefWidth="467.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.avecias.daogenerator.controller.fx.FXMLController">
     <children>
         <Button fx:id="buttonOpenDirectory" layoutX="19.0" layoutY="80.0" onAction="#openDirectory" text="Abrir directorio ..." />
       <Label layoutX="22.0" layoutY="17.0" text="Directorio de ORM de HIbernate" />
       <TextField fx:id="txtDirectory" layoutX="12.0" layoutY="42.0" prefHeight="25.0" prefWidth="432.0" />
-      <TextArea fx:id="textArea" layoutX="18.0" layoutY="306.0" prefHeight="112.0" prefWidth="432.0" />
-      <Button fx:id="buttonStart" disable="true" layoutX="360.0" layoutY="437.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="83.0" text="Iniciar" />
-      <CheckBox layoutX="22.0" layoutY="443.0" mnemonicParsing="false" text="Validadores" />
-      <CheckBox layoutX="151.0" layoutY="443.0" mnemonicParsing="false" text="Pojos" />
-      <TextField fx:id="txtValidations" disable="true" layoutX="98.0" layoutY="188.0" prefHeight="25.0" prefWidth="344.0" />
-      <TextField fx:id="txtDaos" disable="true" layoutX="98.0" layoutY="224.0" prefHeight="25.0" prefWidth="344.0" />
-      <TextField fx:id="txtMappers" disable="true" layoutX="100.0" layoutY="263.0" prefHeight="25.0" prefWidth="344.0" />
-      <Label layoutX="12.0" layoutY="193.0" text="Validaciones" />
-      <Label layoutX="9.0" layoutY="229.0" text="Dao" />
-      <Label layoutX="12.0" layoutY="268.0" text="Mapper" />
+      <TextArea fx:id="txtArea" editable="false" layoutX="18.0" layoutY="443.0" prefHeight="148.0" prefWidth="432.0" />
+      <Button fx:id="buttonStart" disable="true" layoutX="361.0" layoutY="602.0" mnemonicParsing="false" onAction="#generate" prefHeight="25.0" prefWidth="83.0" text="Iniciar" />
+      <TextField fx:id="txtValidations" disable="true" layoutX="98.0" layoutY="217.0" prefHeight="25.0" prefWidth="344.0" />
+      <TextField fx:id="txtDaos" disable="true" layoutX="98.0" layoutY="253.0" prefHeight="25.0" prefWidth="344.0" />
+      <TextField fx:id="txtMappers" disable="true" layoutX="100.0" layoutY="322.0" prefHeight="25.0" prefWidth="344.0" />
+      <Label layoutX="12.0" layoutY="222.0" text="Validaciones" />
+      <Label layoutX="12.0" layoutY="258.0" text="Daos" />
+      <Label layoutX="12.0" layoutY="327.0" text="Mappers" />
       <Label layoutX="17.0" layoutY="119.0" prefHeight="15.0" prefWidth="219.0" text="Paquete principal autodetectado" />
-      <TextField fx:id="txtRootPackage" disable="true" layoutX="15.0" layoutY="145.0" prefHeight="25.0" prefWidth="292.0" />
+      <TextField fx:id="txtRootPackage" disable="true" layoutX="15.0" layoutY="144.0" prefHeight="25.0" prefWidth="292.0" />
       <Label fx:id="labelMessage" layoutX="321.0" layoutY="150.0" prefHeight="15.0" prefWidth="122.0" textFill="#e40101" />
       <Label fx:id="labelTotal" layoutX="251.0" layoutY="85.0" prefHeight="15.0" prefWidth="193.0" />
+      <Label layoutX="12.0" layoutY="365.0" text="Results" />
+      <TextField fx:id="txtResults" disable="true" layoutX="98.0" layoutY="360.0" prefHeight="25.0" prefWidth="344.0" />
+      <TextField fx:id="txtUtils" disable="true" layoutX="100.0" layoutY="398.0" prefHeight="25.0" prefWidth="344.0" />
+      <Label layoutX="13.0" layoutY="403.0" text="Utils" />
+      <Label layoutX="12.0" layoutY="292.0" text="Daos Impl" />
+      <TextField fx:id="txtDaosImpl" disable="true" layoutX="101.0" layoutY="287.0" prefHeight="25.0" prefWidth="344.0" />
+      <Label layoutX="13.0" layoutY="183.0" text="Pojos" />
+      <TextField fx:id="txtPojos" disable="true" layoutX="99.0" layoutY="178.0" prefHeight="25.0" prefWidth="344.0" />
     </children>
 </AnchorPane>
